@@ -1,0 +1,1515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Completeness Letter Generator — City of San Jacinto Planning Division</title>
+<meta name="description" content="City of San Jacinto Planning Division — Completeness Letter Generator">
+<meta name="theme-color" content="#185FA5">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Completeness Letter">
+<link rel="apple-touch-icon" id="pwa-icon-link">
+<link rel="manifest" id="pwa-manifest">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: Arial, sans-serif; color: #1a1a1a; background: #f5f5f3; min-height: 100vh; }
+.app { max-width: 780px; margin: 0 auto; padding: 2rem 1.25rem; }
+.card { background: #fff; border-radius: 12px; border: 1px solid #e0ddd6; padding: 2rem; margin-bottom: 1.5rem; }
+.progress-bar { display: flex; gap: 6px; margin-bottom: 2rem; }
+.step-dot { flex: 1; height: 4px; border-radius: 2px; background: #e0ddd6; transition: background 0.3s; }
+.step-dot.done { background: #378ADD; }
+.step-dot.active { background: #185FA5; }
+.step-header { margin-bottom: 1.5rem; }
+.step-header h2 { font-size: 18px; font-weight: 500; margin-bottom: 4px; }
+.step-header p { font-size: 14px; color: #666; }
+.field { margin-bottom: 1rem; }
+.field label { display: block; font-size: 13px; color: #555; margin-bottom: 4px; }
+.field input, .field select, .field textarea { width: 100%; padding: 8px 10px; border: 1px solid #ccc; border-radius: 8px; font-size: 14px; background: #fff; color: #1a1a1a; font-family: Arial, sans-serif; }
+.field input:focus, .field textarea:focus, .field select:focus { outline: 2px solid #185FA5; border-color: #185FA5; }
+.field textarea { resize: vertical; min-height: 72px; }
+.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.field-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+.subsection-label { font-size: 12px; font-weight: 500; color: #888; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px; margin-top: 4px; }
+.divider { border: none; border-top: 1px solid #e0ddd6; margin: 1rem 0; }
+.section-card { border: 1px solid #e0ddd6; border-radius: 10px; margin-bottom: 1rem; overflow: hidden; }
+.section-card.conditional { border-left: 3px solid #378ADD; }
+.section-tag { display: inline-block; font-size: 10px; padding: 1px 6px; border-radius: 4px; background: #E6F1FB; color: #185FA5; font-weight: 500; margin-left: 6px; vertical-align: middle; }
+.section-header { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: #f5f5f3; cursor: pointer; user-select: none; }
+.section-header h3 { font-size: 14px; font-weight: 500; display: flex; align-items: center; flex-wrap: wrap; gap: 4px; color: #1a1a1a; }
+.section-header .chevron { font-size: 12px; color: #888; transition: transform 0.2s; flex-shrink: 0; }
+.section-header .chevron.open { transform: rotate(180deg); }
+.section-body { padding: 12px 14px; display: none; }
+.section-body.open { display: block; }
+.check-item { display: flex; gap: 10px; padding: 6px 0; border-bottom: 1px solid #f0ede6; align-items: flex-start; }
+.check-item:last-child { border-bottom: none; }
+.check-item input[type=checkbox] { margin-top: 3px; flex-shrink: 0; accent-color: #185FA5; width: 15px; height: 15px; }
+.check-item .item-label { font-size: 13px; color: #1a1a1a; flex: 1; cursor: pointer; line-height: 1.5; }
+.check-item .detail-field { margin-top: 6px; }
+.check-item .detail-field input { width: 100%; padding: 5px 8px; font-size: 12px; border: 1px solid #ccc; border-radius: 6px; background: #fff; color: #1a1a1a; font-family: Arial, sans-serif; }
+.nav-buttons { display: flex; justify-content: space-between; margin-top: 1.5rem; }
+.btn { padding: 9px 20px; border-radius: 8px; border: 1px solid #ccc; font-size: 14px; cursor: pointer; font-family: Arial, sans-serif; font-weight: 500; background: #fff; color: #1a1a1a; transition: background 0.15s; }
+.btn:hover { background: #f5f5f3; }
+.btn-primary { background: #185FA5; color: #fff; border-color: #185FA5; }
+.btn-primary:hover { background: #0C447C; }
+.btn-sm { padding: 6px 14px; font-size: 13px; }
+.btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.count-badge { font-size: 11px; padding: 2px 7px; border-radius: 10px; background: #eee; color: #555; font-weight: 500; }
+.step-page { display: none; }
+.step-page.active { display: block; }
+.app-type-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 1rem; }
+.proj-char-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 1rem; }
+.selector-card { border: 1px solid #ccc; border-radius: 10px; padding: 12px 14px; cursor: pointer; transition: border-color 0.15s, background 0.15s; }
+.selector-card:hover { background: #f5f5f3; }
+.selector-card.selected { border: 2px solid #185FA5; background: #E6F1FB; }
+.selector-card .card-name { font-size: 14px; font-weight: 500; margin-bottom: 2px; color: #1a1a1a; }
+.selector-card .card-desc { font-size: 12px; color: #666; }
+.selector-card.selected .card-name { color: #185FA5; }
+.selector-card.char-card.selected { border-color: #1D9E75; background: #E1F5EE; }
+.selector-card.char-card.selected .card-name { color: #0F6E56; }
+.dev-entry { display: grid; grid-template-columns: 210px 1fr 36px; gap: 8px; align-items: flex-start; margin-bottom: 8px; }
+.dev-entry select { padding: 8px 10px; border: 1px solid #ccc; border-radius: 8px; font-size: 13px; background: #fff; color: #1a1a1a; font-family: Arial, sans-serif; width: 100%; }
+.dev-entry input[type=text] { padding: 8px 10px; border: 1px solid #ccc; border-radius: 8px; font-size: 13px; background: #fff; color: #1a1a1a; font-family: Arial, sans-serif; width: 100%; }
+.btn-remove { width: 36px; height: 36px; border-radius: 8px; border: 1px solid #ccc; background: #fff; color: #888; cursor: pointer; font-size: 18px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; padding: 0; font-family: Arial, sans-serif; }
+.btn-remove:hover { background: #FCEBEB; border-color: #F09595; color: #A32D2D; }
+.dev-entries-wrap { margin-bottom: 12px; min-height: 20px; }
+.empty-msg { font-size: 13px; color: #888; font-style: italic; padding: 8px 0; }
+.cat-group { border: 1px solid #e0ddd6; border-radius: 8px; margin-bottom: 8px; overflow: hidden; }
+.cat-group-header { padding: 6px 12px; background: #f5f5f3; font-size: 12px; font-weight: 500; color: #666; }
+.cat-group-items { padding: 6px 12px 8px; }
+.cat-group-items li { font-size: 13px; color: #1a1a1a; padding: 3px 0; list-style: none; }
+.cat-group-items li::before { content: "☐ "; }
+.add-btn-row { display: flex; align-items: center; gap: 12px; margin-bottom: 6px; }
+.col-headers { display: grid; grid-template-columns: 210px 1fr 36px; gap: 8px; margin-bottom: 4px; }
+.col-label { font-size: 12px; color: #888; }
+.summary-box { background: #f5f5f3; border-radius: 10px; padding: 1rem 1.25rem; border: 1px solid #e0ddd6; margin-bottom: 1.5rem; }
+.summary-row { display: flex; justify-content: space-between; align-items: center; padding: 4px 0; font-size: 13px; border-bottom: 1px solid #e0ddd6; }
+.summary-row:last-child { border-bottom: none; }
+.summary-row .label { color: #666; }
+.summary-row .val { font-weight: 500; }
+.summary-row .val.has-items { color: #185FA5; }
+.generate-box { border: 2px solid #185FA5; border-radius: 10px; padding: 1.25rem; background: #E6F1FB; text-align: center; }
+.generate-box p { font-size: 13px; color: #185FA5; margin-bottom: 1rem; line-height: 1.6; }
+.btn-generate { background: #185FA5; color: #fff; border: none; border-radius: 8px; padding: 12px 32px; font-size: 15px; font-weight: 500; cursor: pointer; font-family: Arial, sans-serif; width: 100%; }
+.btn-generate:hover { background: #0C447C; }
+.save-bar { display: flex; align-items: center; gap: 8px; padding: 8px 12px; background: #f0f7ff; border: 1px solid #b8d4f0; border-radius: 8px; margin-bottom: 1.25rem; flex-wrap: wrap; }
+.save-bar .save-status { font-size: 12px; color: #185FA5; flex: 1; min-width: 120px; }
+.save-bar .save-status.ok { color: #0F6E56; }
+.save-bar .save-status.warn { color: #BA7517; }
+.btn-save { padding: 5px 12px; border-radius: 6px; border: 1px solid #185FA5; font-size: 12px; cursor: pointer; font-family: Arial, sans-serif; font-weight: 500; background: #fff; color: #185FA5; }
+.btn-save:hover { background: #E6F1FB; }
+.btn-load { padding: 5px 12px; border-radius: 6px; border: 1px solid #ccc; font-size: 12px; cursor: pointer; font-family: Arial, sans-serif; font-weight: 500; background: #fff; color: #555; }
+.btn-load:hover { background: #f5f5f3; }
+.btn-clear-draft { padding: 5px 12px; border-radius: 6px; border: 1px solid #F09595; font-size: 12px; cursor: pointer; font-family: Arial, sans-serif; font-weight: 500; background: #fff; color: #A32D2D; }
+.btn-clear-draft:hover { background: #FCEBEB; }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="card">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;">
+      <div style="border-bottom:3px solid #185FA5;padding-bottom:1rem;flex:1;margin-right:1rem;">
+        <div style="font-size:11px;color:#888;text-transform:uppercase;letter-spacing:0.07em;margin-bottom:3px;">City of San Jacinto — Planning Division</div>
+        <div style="font-size:22px;font-weight:500;">Completeness Letter Generator</div>
+      </div>
+      <div style="font-size:13px;color:#666;" id="step-indicator">Step 1 of 5</div>
+    </div>
+    <div class="progress-bar">
+      <div class="step-dot active"></div><div class="step-dot"></div><div class="step-dot"></div><div class="step-dot"></div><div class="step-dot"></div>
+    </div>
+
+    <div class="save-bar">
+      <span class="save-status" id="save-status">No draft saved</span>
+      <button class="btn-save" onclick="exportDraft()">&#8595; Save draft</button>
+      <label class="btn-load" style="cursor:pointer;">&#8593; Load draft<input type="file" id="load-file" accept=".json" style="display:none" onchange="importDraft(event)"></label>
+      <button class="btn-clear-draft" onclick="clearDraft()">Clear</button>
+    </div>
+
+    <!-- STEP 1 -->
+    <div class="step-page active" id="page-1">
+      <div class="step-header"><h2>Project information</h2><p>Basic details that will appear in the letter header</p></div>
+      <div class="subsection-label" style="margin-top:0;">Letter date &amp; submission</div>
+      <div class="field-row">
+        <div class="field"><label>Letter date</label><input type="date" id="f-date"></div>
+        <div class="field"><label>Date application submitted</label><input type="date" id="f-subdate"></div>
+      </div>
+      <hr class="divider">
+      <div class="subsection-label">Applicant information</div>
+      <div class="field-row">
+        <div class="field"><label>Applicant name</label><input type="text" id="f-appname" placeholder="Full name"></div>
+        <div class="field"><label>Company / organization (optional)</label><input type="text" id="f-appcompany" placeholder="e.g. ABC Development LLC"></div>
+      </div>
+      <div class="field"><label>Applicant street address</label><input type="text" id="f-appaddr"></div>
+      <div class="field-row-3">
+        <div class="field"><label>City</label><input type="text" id="f-appcity"></div>
+        <div class="field"><label>State</label><input type="text" id="f-appstate" value="CA"></div>
+        <div class="field"><label>ZIP</label><input type="text" id="f-appzip"></div>
+      </div>
+      <div class="field"><label>Applicant email (optional)</label><input type="email" id="f-appemail" placeholder="applicant@email.com"></div>
+      <hr class="divider">
+      <div class="subsection-label">Project details</div>
+      <div class="field-row">
+        <div class="field"><label>Project number</label><input type="text" id="f-appnum" placeholder="e.g. PROJ25-0025"></div>
+        <div class="field"><label>Assessor's parcel number(s)</label><input type="text" id="f-apn"></div>
+      </div>
+      <div class="field"><label>Project name / description</label><input type="text" id="f-projname"></div>
+      <div class="field"><label>Project address</label><input type="text" id="f-projaddr"></div>
+      <hr class="divider">
+      <div class="subsection-label">Planner information</div>
+      <div class="field-row">
+        <div class="field"><label>Planner name</label><input type="text" id="f-planner"></div>
+        <div class="field"><label>Planner title</label><input type="text" id="f-title" placeholder="e.g. Associate Planner"></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Planner email</label><input type="email" id="f-email" placeholder="planner@sanjacintoca.gov"></div>
+        <div class="field"><label>Appeal period (days)</label><input type="number" id="f-appealdays" value="10" min="1"></div>
+      </div>
+      <div class="field"><label>CC recipients (optional)</label><input type="text" id="f-cc" placeholder="e.g. File, Property Owner"></div>
+    </div>
+
+    <!-- STEP 2 -->
+    <div class="step-page" id="page-2">
+      <div class="step-header"><h2>Application type &amp; project characteristics</h2><p>Select all that apply — the checklist in the next step will update automatically</p></div>
+      <div class="subsection-label">Application type</div>
+      <div class="app-type-grid">
+        <div class="selector-card" data-type="CUP" onclick="toggleType(this)"><div class="card-name">CUP</div><div class="card-desc">Conditional Use Permit</div></div>
+        <div class="selector-card" data-type="MUP" onclick="toggleType(this)"><div class="card-name">MUP</div><div class="card-desc">Minor Use Permit</div></div>
+        <div class="selector-card" data-type="SPDR" onclick="toggleType(this)"><div class="card-name">SPDR</div><div class="card-desc">Site Plan &amp; Design Review</div></div>
+        <div class="selector-card" data-type="PDP" onclick="toggleType(this)"><div class="card-name">PDP</div><div class="card-desc">Planned Development Permit</div></div>
+        <div class="selector-card" data-type="ALCOHOL" onclick="toggleType(this)"><div class="card-name">Alcohol sales</div><div class="card-desc">CUP with alcohol sales component</div></div>
+      </div>
+      <hr class="divider">
+      <div class="subsection-label">Project characteristics</div>
+      <div class="proj-char-grid">
+        <div class="selector-card char-card" data-type="VACANT" onclick="toggleType(this)"><div class="card-name">Vacant / undisturbed land</div><div class="card-desc">Requires Environmental Setting Questionnaire, conceptual grading &amp; landscape plans, and USGS Quadrangle Map</div></div>
+        <div class="selector-card char-card" data-type="CONSTRUCTION" onclick="toggleType(this)"><div class="card-name">New construction or exterior modification</div><div class="card-desc">Requires colored building elevations and a digital materials board</div></div>
+        <div class="selector-card char-card" data-type="SFR" onclick="toggleType(this)"><div class="card-name">Single Family Residential</div><div class="card-desc">Requires design scoring rubric evaluation (§ 17.425.020)</div></div>
+      </div>
+      <div style="font-size:13px;color:#666;padding:8px 12px;background:#f5f5f3;border-radius:8px;margin-top:4px;">
+        Sections marked <span style="display:inline-block;font-size:10px;padding:1px 6px;border-radius:4px;background:#E6F1FB;color:#185FA5;font-weight:500;">type-specific</span> will only appear in the checklist when the relevant selection is made above.
+      </div>
+    </div>
+
+    <!-- STEP 3 -->
+    <div class="step-page" id="page-3">
+      <div class="step-header"><h2>Submittal checklist</h2><p id="checklist-subtitle">Check each item that is missing or incomplete</p></div>
+      <div id="all-deficiencies"></div>
+    </div>
+
+    <!-- STEP 4 -->
+    <div class="step-page" id="page-4">
+      <div class="step-header"><h2>Project-specific comments</h2><p>Add comments by category. Each category will appear as its own sub-section in the letter.</p></div>
+      <div class="add-btn-row">
+        <button class="btn btn-primary btn-sm" onclick="addDevEntry()">+ Add comment</button>
+        <span id="entry-count" style="font-size:13px;color:#666;"></span>
+      </div>
+      <div class="col-headers">
+        <div class="col-label">Category</div>
+        <div class="col-label">Comment</div>
+        <div></div>
+      </div>
+      <div class="dev-entries-wrap" id="dev-entries">
+        <div class="empty-msg" id="empty-msg">No comments added yet. Click "+ Add comment" to begin.</div>
+      </div>
+      <div id="category-preview" style="display:none;margin-bottom:1.5rem;">
+        <div style="font-size:12px;font-weight:500;color:#888;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:8px;">Letter preview</div>
+        <div id="preview-groups"></div>
+      </div>
+      <div style="border-top:1px solid #e0ddd6;padding-top:1.5rem;">
+        <div class="field"><label>CC recipients (optional)</label><input type="text" id="f-cc2" placeholder="e.g. File, Property Owner"></div>
+        <div class="summary-box">
+          <div style="font-size:13px;font-weight:500;margin-bottom:10px;">Letter summary</div>
+          <div class="summary-row"><span class="label">Project number</span><span class="val" id="sum-projnum">—</span></div>
+          <div class="summary-row"><span class="label">Applicant</span><span class="val" id="sum-applicant">—</span></div>
+          <div class="summary-row"><span class="label">Application type(s)</span><span class="val" id="sum-types">—</span></div>
+          <div class="summary-row"><span class="label">Project characteristics</span><span class="val" id="sum-chars">—</span></div>
+          <div class="summary-row"><span class="label">Submittal items flagged</span><span class="val" id="sum-checklist">0</span></div>
+          <div class="summary-row"><span class="label">Project-specific comments</span><span class="val" id="sum-comments">0</span></div>
+          <div class="summary-row" id="sum-sfr-row" style="display:none;"><span class="label">SFR design score</span><span class="val" id="sum-sfr">—</span></div>
+        </div>
+        <div class="generate-box">
+          <p>Ready to generate. Claude will write the letter and produce a<br>formatted <strong>.docx</strong> file with City of San Jacinto letterhead.</p>
+          <button class="btn-generate" onclick="generateLetter()">Generate letter &amp; download .docx</button>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- STEP 5: SFR Design Scoring Rubric -->
+    <div class="step-page" id="page-5">
+      <div class="step-header">
+        <h2>Residential Design Scoring <span style="font-size:13px;font-weight:400;color:#666;">— Exhibit A</span></h2>
+        <p>Score each design criterion per San Jacinto Development Code § 17.425.020. Minimum 62 of 77 points required for approval. Y/N sections require all-yes for approval.</p>
+      </div>
+
+      <!-- Score meter -->
+      <div id="sfr-score-bar" style="background:#f5f5f3;border:1px solid #e0ddd6;border-radius:10px;padding:1rem 1.25rem;margin-bottom:1.25rem;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+          <span style="font-size:13px;font-weight:500;">Points scored</span>
+          <span id="sfr-score-display" style="font-size:20px;font-weight:600;color:#185FA5;">0 / 77</span>
+        </div>
+        <div style="background:#e0ddd6;border-radius:4px;height:8px;margin-bottom:8px;">
+          <div id="sfr-score-fill" style="background:#185FA5;height:8px;border-radius:4px;width:0%;transition:width 0.3s;"></div>
+        </div>
+        <div id="sfr-pass-fail" style="font-size:12px;color:#888;">Enter scores below to calculate</div>
+      </div>
+
+      <!-- Section A: Setbacks & Fronts of Houses (25 pts) -->
+      <div class="section-card conditional" style="margin-bottom:1rem;">
+        <div class="section-header" onclick="toggleSection(this)">
+          <h3>A — Setbacks &amp; Fronts of Houses <span style="font-size:12px;font-weight:400;color:#666;">(25 points possible)</span> <span class="count-badge" id="sfr-score-a">0 pts</span></h3>
+          <span class="chevron open">&#9660;</span>
+        </div>
+        <div class="section-body open" id="sfr-body-a">
+          <div style="display:grid;grid-template-columns:1fr 80px 80px;gap:6px;padding:4px 0 8px;border-bottom:1px solid #e0ddd6;margin-bottom:4px;">
+            <div style="font-size:11px;color:#888;font-weight:500;text-transform:uppercase;">Item</div>
+            <div style="font-size:11px;color:#888;font-weight:500;text-transform:uppercase;text-align:center;">Max pts</div>
+            <div style="font-size:11px;color:#888;font-weight:500;text-transform:uppercase;text-align:center;">Score</div>
+          </div>
+          <div id="sfr-section-a-items"></div>
+          <div style="margin-top:6px;">
+            <label style="font-size:12px;color:#555;display:block;margin-bottom:4px;">Staff comments for this section</label>
+            <textarea id="sfr-comment-a" class="sfr-section-comment" data-section="a" placeholder="Note any items that need redesign, are missing, or require clarification..." style="width:100%;padding:7px 9px;border:1px solid #ccc;border-radius:8px;font-size:13px;font-family:Arial,sans-serif;resize:vertical;min-height:60px;" oninput="scheduleAutoSave()"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section B: Garages & Driveways (10 pts) -->
+      <div class="section-card conditional" style="margin-bottom:1rem;">
+        <div class="section-header" onclick="toggleSection(this)">
+          <h3>B — Garages &amp; Driveways <span style="font-size:12px;font-weight:400;color:#666;">(10 points possible)</span> <span class="count-badge" id="sfr-score-b">0 pts</span></h3>
+          <span class="chevron open">&#9660;</span>
+        </div>
+        <div class="section-body open" id="sfr-body-b">
+          <div style="display:grid;grid-template-columns:1fr 80px 80px;gap:6px;padding:4px 0 8px;border-bottom:1px solid #e0ddd6;margin-bottom:4px;">
+            <div style="font-size:11px;color:#888;font-weight:500;text-transform:uppercase;">Item</div>
+            <div style="font-size:11px;color:#888;font-weight:500;text-transform:uppercase;text-align:center;">Max pts</div>
+            <div style="font-size:11px;color:#888;font-weight:500;text-transform:uppercase;text-align:center;">Score</div>
+          </div>
+          <div id="sfr-section-b-items"></div>
+          <div style="margin-top:6px;">
+            <label style="font-size:12px;color:#555;display:block;margin-bottom:4px;">Staff comments for this section</label>
+            <textarea id="sfr-comment-b" class="sfr-section-comment" data-section="b" placeholder="Note any items that need redesign, are missing, or require clarification..." style="width:100%;padding:7px 9px;border:1px solid #ccc;border-radius:8px;font-size:13px;font-family:Arial,sans-serif;resize:vertical;min-height:60px;" oninput="scheduleAutoSave()"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section C: Architecture (42 pts) -->
+      <div class="section-card conditional" style="margin-bottom:1rem;">
+        <div class="section-header" onclick="toggleSection(this)">
+          <h3>C — Architecture <span style="font-size:12px;font-weight:400;color:#666;">(42 points possible)</span> <span class="count-badge" id="sfr-score-c">0 pts</span></h3>
+          <span class="chevron open">&#9660;</span>
+        </div>
+        <div class="section-body open" id="sfr-body-c">
+          <div style="display:grid;grid-template-columns:1fr 80px 80px;gap:6px;padding:4px 0 8px;border-bottom:1px solid #e0ddd6;margin-bottom:4px;">
+            <div style="font-size:11px;color:#888;font-weight:500;text-transform:uppercase;">Item</div>
+            <div style="font-size:11px;color:#888;font-weight:500;text-transform:uppercase;text-align:center;">Max pts</div>
+            <div style="font-size:11px;color:#888;font-weight:500;text-transform:uppercase;text-align:center;">Score</div>
+          </div>
+          <div id="sfr-section-c-items"></div>
+          <div style="margin-top:6px;">
+            <label style="font-size:12px;color:#555;display:block;margin-bottom:4px;">Staff comments for this section</label>
+            <textarea id="sfr-comment-c" class="sfr-section-comment" data-section="c" placeholder="Note any items that need redesign, are missing, or require clarification..." style="width:100%;padding:7px 9px;border:1px solid #ccc;border-radius:8px;font-size:13px;font-family:Arial,sans-serif;resize:vertical;min-height:60px;" oninput="scheduleAutoSave()"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section D: Garage & Architectural Features (Y/N) -->
+      <div class="section-card conditional" style="margin-bottom:1rem;">
+        <div class="section-header" onclick="toggleSection(this)">
+          <h3>D — Garage &amp; Architectural Features <span style="font-size:12px;font-weight:400;color:#666;">(Y/N — min. 3 of 5 Yes)</span> <span class="count-badge" id="sfr-score-d">—</span></h3>
+          <span class="chevron open">&#9660;</span>
+        </div>
+        <div class="section-body open" id="sfr-body-d">
+          <div style="font-size:12px;color:#555;background:#f5f5f3;padding:8px 10px;border-radius:6px;margin-bottom:8px;">No points awarded. Plans must include at least 3 of the 5 items below with a <strong>Yes</strong> determination.</div>
+          <div style="display:grid;grid-template-columns:1fr 60px;gap:6px;padding:4px 0 8px;border-bottom:1px solid #e0ddd6;margin-bottom:4px;">
+            <div style="font-size:11px;color:#888;font-weight:500;text-transform:uppercase;">Item</div>
+            <div style="font-size:11px;color:#888;font-weight:500;text-transform:uppercase;text-align:center;">Y / N</div>
+          </div>
+          <div id="sfr-section-d-items"></div>
+          <div style="margin-top:6px;">
+            <label style="font-size:12px;color:#555;display:block;margin-bottom:4px;">Staff comments for this section</label>
+            <textarea id="sfr-comment-d" class="sfr-section-comment" data-section="d" placeholder="Note any items that need redesign, are missing, or require clarification..." style="width:100%;padding:7px 9px;border:1px solid #ccc;border-radius:8px;font-size:13px;font-family:Arial,sans-serif;resize:vertical;min-height:60px;" oninput="scheduleAutoSave()"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section E: Walls & Fences (Y/N) -->
+      <div class="section-card conditional" style="margin-bottom:1rem;">
+        <div class="section-header" onclick="toggleSection(this)">
+          <h3>E — Walls &amp; Fences <span style="font-size:12px;font-weight:400;color:#666;">(Y/N — all items Yes required)</span> <span class="count-badge" id="sfr-score-e">—</span></h3>
+          <span class="chevron open">&#9660;</span>
+        </div>
+        <div class="section-body open" id="sfr-body-e">
+          <div style="font-size:12px;color:#555;background:#f5f5f3;padding:8px 10px;border-radius:6px;margin-bottom:8px;">No points awarded. Plans must include <strong>all</strong> items below with a Yes determination.</div>
+          <div style="display:grid;grid-template-columns:1fr 60px;gap:6px;padding:4px 0 8px;border-bottom:1px solid #e0ddd6;margin-bottom:4px;">
+            <div style="font-size:11px;color:#888;font-weight:500;text-transform:uppercase;">Item</div>
+            <div style="font-size:11px;color:#888;font-weight:500;text-transform:uppercase;text-align:center;">Y / N</div>
+          </div>
+          <div id="sfr-section-e-items"></div>
+          <div style="margin-top:6px;">
+            <label style="font-size:12px;color:#555;display:block;margin-bottom:4px;">Staff comments for this section</label>
+            <textarea id="sfr-comment-e" class="sfr-section-comment" data-section="e" placeholder="Note any items that need redesign, are missing, or require clarification..." style="width:100%;padding:7px 9px;border:1px solid #ccc;border-radius:8px;font-size:13px;font-family:Arial,sans-serif;resize:vertical;min-height:60px;" oninput="scheduleAutoSave()"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section F: Landscaping (Y/N) -->
+      <div class="section-card conditional" style="margin-bottom:1rem;">
+        <div class="section-header" onclick="toggleSection(this)">
+          <h3>F — Landscaping <span style="font-size:12px;font-weight:400;color:#666;">(Y/N determination)</span> <span class="count-badge" id="sfr-score-f">—</span></h3>
+          <span class="chevron open">&#9660;</span>
+        </div>
+        <div class="section-body open" id="sfr-body-f">
+          <div style="font-size:12px;color:#555;background:#f5f5f3;padding:8px 10px;border-radius:6px;margin-bottom:8px;">No points awarded. Landscape Planting Plan must receive a Yes determination per § 17.800.130.</div>
+          <div style="display:grid;grid-template-columns:1fr 60px;gap:6px;padding:4px 0 8px;border-bottom:1px solid #e0ddd6;margin-bottom:4px;">
+            <div style="font-size:11px;color:#888;font-weight:500;text-transform:uppercase;">Item</div>
+            <div style="font-size:11px;color:#888;font-weight:500;text-transform:uppercase;text-align:center;">Y / N</div>
+          </div>
+          <div id="sfr-section-f-items"></div>
+          <div style="margin-top:6px;">
+            <label style="font-size:12px;color:#555;display:block;margin-bottom:4px;">Staff comments for this section</label>
+            <textarea id="sfr-comment-f" class="sfr-section-comment" data-section="f" placeholder="Note any items that need redesign, are missing, or require clarification..." style="width:100%;padding:7px 9px;border:1px solid #ccc;border-radius:8px;font-size:13px;font-family:Arial,sans-serif;resize:vertical;min-height:60px;" oninput="scheduleAutoSave()"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Overall staff comment -->
+      <div style="border:1px solid #e0ddd6;border-radius:10px;padding:1rem 1.25rem;margin-bottom:1rem;">
+        <div style="font-size:13px;font-weight:500;margin-bottom:8px;">Overall staff recommendation / notes</div>
+        <textarea id="sfr-comment-overall" placeholder="Overall findings and recommendation for the applicant..." style="width:100%;padding:7px 9px;border:1px solid #ccc;border-radius:8px;font-size:13px;font-family:Arial,sans-serif;resize:vertical;min-height:72px;" oninput="scheduleAutoSave()"></textarea>
+      </div>
+
+      <!-- Step 5 action buttons -->
+      <div style="border-top:1px solid #e0ddd6;padding-top:1.5rem;">
+        <div class="generate-box">
+          <p>Scoring complete. Claude will polish your comments, generate the completeness letter, and produce a formatted <strong>.docx</strong> with the design scoring rubric as Exhibit A.</p>
+          <button class="btn-generate" onclick="generateLetter()">Generate letter &amp; download .docx</button>
+        </div>
+        <div style="text-align:center;margin-top:10px;">
+          <button class="btn" style="font-size:13px;color:#555;" onclick="exportDraft()">&#8595; Export JSON draft (resume later)</button>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="nav-buttons" id="nav-buttons">
+      <button class="btn" id="btn-back" onclick="goBack()" disabled>Back</button>
+      <button class="btn btn-primary" id="btn-next" onclick="goNext()">Next</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const TOTAL_STEPS = 5;
+let currentStep = 1;
+let selectedTypes = new Set();
+let entryCounter = 0;
+
+const APP_TYPES = new Set(['CUP','MUP','SPDR','PDP','ALCOHOL']);
+const PROJ_CHARS = new Set(['VACANT','CONSTRUCTION','SFR']);
+const APP_TYPE_LABELS = { CUP:'CUP', MUP:'MUP', SPDR:'SPDR', PDP:'PDP', ALCOHOL:'Alcohol Sales' };
+const CHAR_LABELS = { VACANT:'Vacant / undisturbed land', CONSTRUCTION:'New construction or exterior modification', SFR:'Single Family Residential' };
+
+const CATEGORIES = [
+  'Access & Legal Access','Architecture & Building Design','Circulation & Driveways',
+  'Fencing & Walls','Grading & Drainage','Land Use & Zoning','Landscaping','Lighting',
+  'Noise & Compatibility','Open Space & Recreation','Parking','Setbacks & Building Placement',
+  'Signage','Trash & Recycling Enclosures','CEQA / Environmental','Other'
+];
+
+const ALL_SECTIONS = [
+  { id:'signed-app', title:'Signed application', items:[
+    { id:'sig-missing', label:'Missing signature: provide a signature from the property owner', detail:false }
+  ]},
+  { id:'fees', title:'Application Fees', items:[
+    { id:'fees-unpaid', label:'Application fees not paid', detail:false },
+    { id:'fees-insufficient', label:'Insufficient fee payment', detail:true, placeholder:'Paid $_____, required $_____' }
+  ]},
+  { id:'title', title:'Preliminary Title Report', items:[
+    { id:'title-missing', label:'Title report not provided — provide a report prepared within the last 6 months', detail:false }
+  ]},
+  { id:'access', title:'Legal Access Documentation', items:[
+    { id:'access-no-street', label:'Property does not abut a public street; legal access documentation required', detail:false },
+    { id:'access-easement', label:'Recorded easement not provided', detail:true, placeholder:'Specify APNs...' },
+    { id:'access-incomplete', label:'Legal access documentation is incomplete or illegible', detail:false }
+  ]},
+  { id:'willserve', title:'Will Serve Letters', items:[
+    { id:'ws-water', label:'Water "Will Serve" letter not provided', detail:false },
+    { id:'ws-sewer', label:'Sewer "Will Serve" letter not provided', detail:false },
+    { id:'ws-expired', label:'Will Serve letter(s) provided are expired or conditional; updated letter(s) required', detail:false }
+  ]},
+  { id:'ceqa', title:'Technical Reports (CEQA)', items:[
+    { id:'ceqa-aq', label:'Air Quality / Greenhouse Gas / Climate Change / Energy Study', detail:true, placeholder:'Required because...' },
+    { id:'ceqa-bio', label:'Biological Surveys (MSHCP, focused species, jurisdictional delineation)', detail:true, placeholder:'Required because...' },
+    { id:'ceqa-cult', label:'Cultural Resource Assessment', detail:true, placeholder:'Required because...' },
+    { id:'ceqa-geo', label:'Geology / Soils / Geotechnical Report', detail:true, placeholder:'Required because...' },
+    { id:'ceqa-hra', label:'Health Risk Assessment', detail:true, placeholder:'Required because...' },
+    { id:'ceqa-hist', label:'Historical Resources Assessment', detail:true, placeholder:'Required because...' },
+    { id:'ceqa-noise', label:'Noise Study / Acoustical Analysis', detail:true, placeholder:'Required because...' },
+    { id:'ceqa-traffic', label:'Traffic Study / Traffic Impact Analysis (must be signed by registered Traffic Engineer)', detail:false },
+    { id:'ceqa-vmt', label:'Vehicle Miles Traveled (VMT) Analysis', detail:true, placeholder:'Required because...' },
+    { id:'ceqa-visual', label:'Visual Analysis', detail:true, placeholder:'Required because...' },
+    { id:'ceqa-wsa', label:'Water Supply Assessment', detail:true, placeholder:'Required because...' }
+  ]},
+  { id:'wqmp', title:'Water Quality Management Plan (WQMP)', items:[
+    { id:'wqmp-missing', label:'WQMP Information Sheet not provided', detail:false },
+    { id:'wqmp-required', label:'Complete WQMP required before application can be deemed complete', detail:false }
+  ]},
+  { id:'hazmat', title:'Hazardous Waste Disclosure Statement', items:[
+    { id:'hazmat-missing', label:'Hazardous Waste Disclosure Statement not provided', detail:false }
+  ]},
+  { id:'siteplan-general', title:'All plans', items:[
+    { id:'sp-g1', label:'Item 1: Name, address, and telephone number of applicant missing', detail:false },
+    { id:'sp-g2', label:'Item 2: Name, address, and telephone number of land owner missing', detail:false },
+    { id:'sp-g3', label:'Item 3: Name, address, and telephone number of exhibit preparer missing', detail:false },
+    { id:'sp-g4', label:"Item 4: Assessor's Parcel Numbers and property address missing", detail:false },
+    { id:'sp-g5', label:"Item 5: Appropriate scale not used (typically 1\"=20' to 1\"=100')", detail:false },
+    { id:'sp-g6', label:'Item 6: North arrow missing', detail:false },
+    { id:'sp-g7', label:'Item 7: Date exhibit prepared missing', detail:false },
+    { id:'sp-g8', label:'Item 8: Title of exhibit missing', detail:false },
+    { id:'sp-g9', label:'Item 9: Detailed project description missing', detail:false },
+    { id:'sp-g10', label:'Item 10: Complete legal description of property missing', detail:false },
+    { id:'sp-g11', label:'Item 11: Overall dimensions and total net and gross acreage missing', detail:false },
+    { id:'sp-g12', label:'Item 12: Vicinity map missing', detail:false },
+    { id:'sp-g13', label:'Item 13: Exhibit revision block missing', detail:false },
+    { id:'sp-g14', label:'Item 14: Numbered mobile home/RV spaces, dwelling units, or lots not shown (if applicable)', detail:false },
+    { id:'sp-g15', label:'Item 15: Location of adjoining property and lot lines missing', detail:false },
+    { id:'sp-g16', label:'Item 16: Existing and proposed zoning and land use of property missing', detail:false },
+    { id:'sp-g17', label:'Item 17: Existing use and zoning of surrounding properties missing', detail:false },
+    { id:'sp-g18', label:'Item 18: Specific Plan Planning Area number and land use designation not indicated (if applicable)', detail:false },
+    { id:'sp-g19', label:'Item 19: Community Services District landscape and lighting area identification missing (if applicable)', detail:false },
+    { id:'sp-g20', label:'Item 20: Land or right-of-way to be dedicated not labeled or described', detail:false },
+    { id:'sp-g21', label:'Item 21: Location, dimensions, setbacks, and nature of fences, gates, walls, signs, driveways, drainage structures, and subsurface systems missing', detail:false },
+    { id:'sp-g22', label:'Item 22: Parking spaces missing or incomplete (location, dimensions, arrangement, numbering, ADA spaces)', detail:false },
+    { id:'sp-g23', label:'Item 23: Location, dimensions, and cross-section of ingress/egress and vehicular circulation missing', detail:false },
+    { id:'sp-g24', label:'Item 24: Location and dimensions of existing structures (labeled as existing; indicate if to remain or be removed) missing', detail:false },
+    { id:'sp-g25', label:'Item 25: Location, dimensions, and height of proposed structures missing', detail:false },
+    { id:'sp-g26', label:'Item 26: Setback dimensions of proposed structures and paved areas missing', detail:false },
+    { id:'sp-g27', label:'Item 27: Trash enclosure details missing (wall height, construction type, ADA accessibility, trellis detail)', detail:false },
+    { id:'sp-g28', label:'Item 28: ADA path of travel from public right-of-way, building to building, and to trash enclosures missing', detail:false },
+    { id:'sp-g29', label:'Item 29: (Cal Green) Long-term covered, lockable bicycle parking not shown', detail:false },
+    { id:'sp-g30', label:'Item 30: (Cal Green) Building commissioning note missing for buildings 10,000 sq ft or more', detail:false }
+  ]},
+  { id:'siteplan-specific', title:'Site plan requirements', items:[
+    { id:'sp-s1', label:'Item 1: Names, addresses, and phone numbers of utility purveyors and school district(s) missing', detail:false },
+    { id:'sp-s2', label:'Item 2: Adjacent street names, locations, right-of-way widths, improvements, grades, and centerline radii missing', detail:false },
+    { id:'sp-s3', label:'Item 3: Table/matrix showing required vs. proposed floor area ratio, parking spaces, landscape %, waste/recycle area, and loading spaces missing', detail:false },
+    { id:'sp-s4', label:'Item 4: Area and density calculations table with percentage breakdowns missing', detail:false },
+    { id:'sp-s5', label:'Item 5: Labeled common areas, open space, and recreational areas with dimensions, acreage, proposed uses, and maintenance entity missing', detail:false },
+    { id:'sp-s6', label:'Item 6: Labeled landscaped areas with dimensions and spacing of proposed planters missing', detail:false },
+    { id:'sp-s7', label:'Item 7: Square footage calculations per floor and total for each building missing', detail:false },
+    { id:'sp-s8', label:'Item 8: Shaded path of travel for fire/emergency access missing', detail:false }
+  ]},
+  { id:'floorplans', title:'Floor Plans & Elevation Requirements', items:[
+    { id:'fp-1', label:'Item 1: Dimensioned elevations missing details of proposed materials, type of construction, and occupancy classification', detail:false },
+    { id:'fp-2', label:'Item 2: Elevations do not show all sides of all buildings; missing wall signs, HVAC, solar, roof equipment, electrical equipment, roof access ladder, fire riser, or gas meter stub-out', detail:false },
+    { id:'fp-3', label:'Item 3: Floor plans not fully dimensioned; uses of all rooms not indicated; mechanical equipment, ADA access, restrooms, play areas, storage, or garages not shown', detail:false },
+    { id:'fp-3a', label:'Item 3a: (Alcohol sales) Floor plans must specify areas for alcohol display, storage, and service with percentages of total building area', detail:false },
+    { id:'fp-4', label:'Item 4: Roof plan missing parapet height, roof height, deck elevations, or tallest equipment height; sign locations not identified; landscaping or decorative figures shown on elevations (must be removed)', detail:false }
+  ]},
+  { id:'bizops', title:'Business Operational Characteristics', requires:['CUP','MUP'], items:[
+    { id:'biz-hours', label:'Hours of operation not provided', detail:false },
+    { id:'biz-activities', label:'Activities performed onsite not described', detail:false },
+    { id:'biz-customers', label:'Estimated customer base not provided', detail:false },
+    { id:'biz-employees', label:'Number of employees not specified', detail:false },
+    { id:'biz-other', label:'Business operations description insufficient', detail:true, placeholder:'Specify what additional detail is needed...' }
+  ]},
+  { id:'esq', title:'Environmental Setting Questionnaire', requires:['VACANT'], items:[
+    { id:'esq-missing', label:'Environmental Setting Questionnaire not provided', detail:false },
+    { id:'esq-incomplete', label:'Environmental Setting Questionnaire incomplete', detail:true, placeholder:'Specify sections requiring completion...' }
+  ]},
+  { id:'conceptual', title:'Conceptual Plans', requires:['VACANT'], items:[
+    { id:'cg-missing', label:'Conceptual Grading Plan not provided', detail:false },
+    { id:'cl-missing', label:'Conceptual Landscape Plan not provided', detail:false },
+    { id:'cg-other', label:'Conceptual plan deficiencies', detail:true, placeholder:'List specific deficiencies...' }
+  ]},
+  { id:'usgs', title:'USGS Quadrangle Map', requires:['VACANT'], items:[
+    { id:'usgs-missing', label:'USGS Quadrangle Map not provided', detail:false },
+    { id:'usgs-scale', label:'Map not at 2400:1 scale or has been enlarged/reduced', detail:false },
+    { id:'usgs-labels', label:'Map missing required labels (north arrow, scale, quadrangle name, Section/Township/Range, site identification)', detail:false }
+  ]},
+  { id:'elevations', title:'Building Elevations', requires:['CONSTRUCTION'], items:[
+    { id:'elev-missing', label:'Colored elevations not provided', detail:false },
+    { id:'elev-sides', label:'Elevations do not show all sides of all buildings', detail:false },
+    { id:'elev-dims', label:'Elevations not dimensioned (height, wall dimensions)', detail:false },
+    { id:'elev-materials', label:'Missing details of proposed materials', detail:false },
+    { id:'elev-equip', label:'Wall signs, HVAC, solar, roof equipment not shown', detail:false }
+  ]},
+  { id:'materials', title:'Materials Board', requires:['CONSTRUCTION'], items:[
+    { id:'mat-missing', label:'Digital color and materials board not provided', detail:false },
+    { id:'mat-incomplete', label:'Materials board does not clearly show proposed colors and textures', detail:false }
+  ]},
+  { id:'pdp', title:'Planned Development Permit Requirements', requires:['PDP'], items:[
+    { id:'pdp-1', label:'Item 1: Preliminary development plan (plotting study) not provided', detail:false },
+    { id:'pdp-2', label:'Item 2: Calculations of site area, dwelling units, and open space area not provided', detail:false },
+    { id:'pdp-3', label:'Item 3: Computations of gross and net site area missing; if phased, computations per phase required', detail:false },
+    { id:'pdp-4', label:'Item 4: Number of dwelling units per housing type not provided', detail:false },
+    { id:'pdp-5', label:'Item 5: Dimensioned setbacks not shown', detail:false },
+    { id:'pdp-6', label:'Item 6: Preliminary architectural renderings not provided; single-family must show architectural variation', detail:false },
+    { id:'pdp-7', label:'Item 7: Detailed amenities plan not provided', detail:false },
+    { id:'pdp-8', label:'Item 8: Catalog cuts of exterior common open space features not provided', detail:false },
+    { id:'pdp-9', label:'Item 9: Multi-family information form incomplete', detail:false },
+    { id:'pdp-10', label:'Item 10: Development schedule not provided', detail:false },
+    { id:'pdp-11', label:'Item 11: If phased, open space and amenities for each individual phase not indicated', detail:false }
+  ]},
+  { id:'alcohol', title:'Alcohol Sales Requirements', requires:['ALCOHOL'], items:[
+    { id:'alc-map', label:'Item 1: Proximity map not provided (schools, worship, parks, youth facilities within 600 ft; residential within 100 ft; alcohol businesses within 1,000 ft; pool halls within 100 ft)', detail:false },
+    { id:'alc-fp', label:'Item 2: Floor plan does not show alcohol display/storage/service areas vs. total retail/refrigeration space', detail:false },
+    { id:'alc-abc', label:'Item 3: Copy of ABC application not provided; ABC license type not specified', detail:false }
+  ]},
+  { id:'pcorn', title:'Public Convenience or Necessity (PCorN)', requires:['ALCOHOL'], items:[
+    { id:'pcorn-map', label:'Item 1: Census Tract map with project site and existing ABC licenses not provided', detail:false },
+    { id:'pcorn-unique', label:'Item 2: Description of unique products/services vs. existing alcohol businesses within 1,000 ft not provided', detail:false },
+    { id:'pcorn-improve', label:'Item 3: Description of site improvements beneficial to the community not provided', detail:false },
+    { id:'pcorn-crime', label:'Item 4: Description of how business will NOT contribute to crime problems not provided', detail:false },
+    { id:'pcorn-support', label:'Item 5: Written letters of support not attached', detail:false },
+    { id:'pcorn-abc-doc', label:'Item 6: ABC documentation regarding over-concentration and/or crime rates not provided', detail:false }
+  ]}
+];
+
+function sectionIsVisible(sec) {
+  if (!sec.requires || sec.requires.length === 0) return true;
+  return sec.requires.some(r => selectedTypes.has(r));
+}
+
+function buildChecklist() {
+  const container = document.getElementById('all-deficiencies');
+  container.innerHTML = '';
+  ALL_SECTIONS.filter(sectionIsVisible).forEach(sec => {
+    const isConditional = sec.requires && sec.requires.length > 0;
+    const card = document.createElement('div');
+    card.className = 'section-card' + (isConditional ? ' conditional' : '');
+    const tagLabel = sec.requires ? sec.requires.map(r => CHAR_LABELS[r] || APP_TYPE_LABELS[r] || r).join(' / ') : '';
+    card.innerHTML = `
+      <div class="section-header" onclick="toggleSection(this)">
+        <h3>${sec.title}${isConditional ? '<span class="section-tag">'+tagLabel+'</span>' : ''} <span class="count-badge" id="count-${sec.id}">0 flagged</span></h3>
+        <span class="chevron">&#9660;</span>
+      </div>
+      <div class="section-body" id="body-${sec.id}">
+        ${sec.items.map(item => `
+          <div class="check-item">
+            <input type="checkbox" id="chk-${item.id}" onchange="updateCount('${sec.id}')">
+            <div style="flex:1">
+              <label for="chk-${item.id}" class="item-label">${item.label}</label>
+              ${item.detail ? '<div class="detail-field"><input type="text" id="det-'+item.id+'" placeholder="'+(item.placeholder||'Add detail...')+'" style="display:none"></div>' : ''}
+            </div>
+          </div>`).join('')}
+      </div>`;
+    container.appendChild(card);
+    sec.items.forEach(item => {
+      if (item.detail) {
+        const chk = document.getElementById('chk-'+item.id);
+        const det = document.getElementById('det-'+item.id);
+        if (chk && det) chk.addEventListener('change', () => { det.style.display = chk.checked ? 'block' : 'none'; });
+      }
+    });
+  });
+  const appTypes = [...selectedTypes].filter(t => APP_TYPES.has(t));
+  const chars = [...selectedTypes].filter(t => PROJ_CHARS.has(t));
+  const parts = [];
+  if (appTypes.length) parts.push(appTypes.map(t => APP_TYPE_LABELS[t]).join(', '));
+  if (chars.length) parts.push(chars.map(c => CHAR_LABELS[c]).join(', '));
+  document.getElementById('checklist-subtitle').textContent = parts.length
+    ? 'Showing all standard items plus sections specific to: ' + parts.join('; ')
+    : 'Check each item that is missing or incomplete';
+}
+
+function toggleSection(hdr) {
+  hdr.nextElementSibling.classList.toggle('open');
+  hdr.querySelector('.chevron').classList.toggle('open');
+}
+
+function updateCount(secId) {
+  const body = document.getElementById('body-'+secId);
+  const n = body ? body.querySelectorAll('input[type=checkbox]:checked').length : 0;
+  const b = document.getElementById('count-'+secId);
+  if (!b) return;
+  b.textContent = n === 0 ? '0 flagged' : n+' flagged';
+  b.style.background = n > 0 ? '#E6F1FB' : '#eee';
+  b.style.color = n > 0 ? '#185FA5' : '#555';
+}
+
+function toggleType(card) {
+  const t = card.dataset.type;
+  if (selectedTypes.has(t)) { selectedTypes.delete(t); card.classList.remove('selected'); }
+  else { selectedTypes.add(t); card.classList.add('selected'); }
+  // If we're on step 4, refresh the Next button visibility
+  if (currentStep === 4) {
+    const nb = document.getElementById('btn-next');
+    const hasSFR = selectedTypes.has('SFR');
+    if (hasSFR) { nb.style.display = ''; nb.textContent = 'Next: Design Scoring →'; }
+    else { nb.style.display = 'none'; }
+  }
+}
+
+function collectAllChecked() {
+  const items = [];
+  ALL_SECTIONS.filter(sectionIsVisible).forEach(sec => {
+    sec.items.forEach(item => {
+      const chk = document.getElementById('chk-'+item.id);
+      if (chk && chk.checked) {
+        const det = document.getElementById('det-'+item.id);
+        items.push({ section: sec.title, label: item.label, note: det ? det.value.trim() : '' });
+      }
+    });
+  });
+  return items;
+}
+
+function addDevEntry() {
+  const wrap = document.getElementById('dev-entries');
+  const empty = document.getElementById('empty-msg');
+  if (empty) empty.style.display = 'none';
+  entryCounter++;
+  const id = 'entry-' + entryCounter;
+  const row = document.createElement('div');
+  row.className = 'dev-entry'; row.id = id;
+  row.innerHTML =
+    '<select onchange="refreshSummary()" aria-label="Category"><option value="">— Select category —</option>' +
+    CATEGORIES.map(c => '<option value="'+c+'">'+c+'</option>').join('') +
+    '</select><input type="text" placeholder="Describe the comment..." oninput="refreshSummary()" aria-label="Comment">' +
+    '<button class="btn-remove" onclick="removeEntry(\''+id+'\')" title="Remove">&times;</button>';
+  wrap.appendChild(row);
+  refreshSummary();
+  row.querySelector('input[type=text]').focus();
+}
+
+function removeEntry(id) {
+  const el = document.getElementById(id);
+  if (el) el.remove();
+  if (document.querySelectorAll('.dev-entry').length === 0) {
+    const wrap = document.getElementById('dev-entries');
+    const empty = document.createElement('div');
+    empty.className = 'empty-msg'; empty.id = 'empty-msg';
+    empty.textContent = 'No comments added yet. Click "+ Add comment" to begin.';
+    wrap.appendChild(empty);
+  }
+  refreshSummary();
+}
+
+function getDevEntries() {
+  const entries = [];
+  document.querySelectorAll('.dev-entry').forEach(row => {
+    const cat = row.querySelector('select').value;
+    const desc = row.querySelector('input[type=text]').value.trim();
+    if (cat && desc) entries.push({ category: cat, text: desc });
+  });
+  return entries;
+}
+
+function groupByCategory(entries) {
+  const map = {};
+  entries.forEach(e => {
+    if (!map[e.category]) map[e.category] = [];
+    map[e.category].push(e.text);
+  });
+  return map;
+}
+
+function formatDate(val) {
+  if (!val) return '';
+  const [y, m, d] = val.split('-').map(Number);
+  const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  return months[m-1] + ' ' + d + ', ' + y;
+}
+
+function v(id) { const el = document.getElementById(id); return el ? el.value.trim() : ''; }
+
+function refreshSummary() {
+  const total = document.querySelectorAll('.dev-entry').length;
+  document.getElementById('entry-count').textContent = total > 0 ? total+' row'+(total!==1?'s':'')+' added' : '';
+  const entries = getDevEntries();
+  const preview = document.getElementById('category-preview');
+  if (entries.length === 0) {
+    preview.style.display = 'none';
+  } else {
+    preview.style.display = 'block';
+    const grouped = groupByCategory(entries);
+    document.getElementById('preview-groups').innerHTML = Object.entries(grouped).map(function(e) {
+      return '<div class="cat-group"><div class="cat-group-header">'+e[0]+'</div><ul class="cat-group-items">'+e[1].map(function(i){return '<li>'+i+'</li>';}).join('')+'</ul></div>';
+    }).join('');
+  }
+  const checked = collectAllChecked();
+  const appTypes = [...selectedTypes].filter(t => APP_TYPES.has(t));
+  const chars = [...selectedTypes].filter(t => PROJ_CHARS.has(t));
+  document.getElementById('sum-projnum').textContent = v('f-appnum') || '—';
+  document.getElementById('sum-applicant').textContent = v('f-appname') || '—';
+  document.getElementById('sum-types').textContent = appTypes.length > 0 ? appTypes.map(t => APP_TYPE_LABELS[t]).join(', ') : '—';
+  document.getElementById('sum-chars').textContent = chars.length > 0 ? chars.map(c => CHAR_LABELS[c]).join(', ') : '—';
+  const cl = document.getElementById('sum-checklist');
+  cl.textContent = checked.length;
+  cl.className = 'val' + (checked.length > 0 ? ' has-items' : '');
+  const cm = document.getElementById('sum-comments');
+  cm.textContent = entries.length;
+  cm.className = 'val' + (entries.length > 0 ? ' has-items' : '');
+  // SFR score in summary
+  const sfrRow = document.getElementById('sum-sfr-row');
+  const sfrVal = document.getElementById('sum-sfr');
+  if (selectedTypes.has('SFR') && sfrRow && sfrVal) {
+    sfrRow.style.display = '';
+    const scores = collectSFRScores();
+    if (scores && scores.totalPoints > 0) {
+      sfrVal.textContent = scores.totalPoints + '/77 pts (' + (scores.passes ? 'PASS' : 'FAIL') + ')';
+      sfrVal.style.color = scores.passes ? '#0F6E56' : '#A32D2D';
+    } else {
+      sfrVal.textContent = 'Not yet scored';
+      sfrVal.style.color = '#888';
+    }
+  } else if (sfrRow) {
+    sfrRow.style.display = 'none';
+  }
+}
+
+function syncNavButtons() {
+  const nb = document.getElementById('btn-next');
+  if (!nb) return;
+  const hasSFR = selectedTypes.has('SFR');
+  if (currentStep === 5) {
+    nb.style.display = 'none';
+  } else if (currentStep === 4 && !hasSFR) {
+    nb.style.display = 'none';
+  } else {
+    nb.style.display = '';
+    nb.textContent = (currentStep === 4 && hasSFR) ? 'Next: Design Scoring →' : 'Next';
+    nb.className = 'btn btn-primary';
+  }
+  const bb = document.getElementById('btn-back');
+  if (bb) bb.disabled = currentStep === 1;
+}
+
+function goNext() {
+  if (currentStep === 2) buildChecklist();
+  if (currentStep === 3) refreshSummary();
+  if (currentStep === 4 && !selectedTypes.has('SFR')) return;
+  if (currentStep >= 5) return;
+  setStep(currentStep + 1);
+}
+function goBack() { setStep(currentStep - 1); }
+
+function setStep(n) {
+  const oldPage = document.getElementById('page-'+currentStep);
+  if (oldPage) oldPage.classList.remove('active');
+  currentStep = n;
+  const newPage = document.getElementById('page-'+currentStep);
+  if (newPage) newPage.classList.add('active');
+  const si = document.getElementById('step-indicator');
+  if (si) si.textContent = 'Step '+currentStep+' of '+TOTAL_STEPS;
+  document.querySelectorAll('.step-dot').forEach(function(d,i) {
+    d.className = 'step-dot'+(i+1<currentStep?' done':i+1===currentStep?' active':'');
+  });
+  syncNavButtons();
+  if (currentStep === 4) refreshSummary();
+}
+
+function generateLetter() {
+  const checked = collectAllChecked();
+  const comments = getDevEntries();
+  const appTypes = [...selectedTypes].filter(t => APP_TYPES.has(t));
+  const chars = [...selectedTypes].filter(t => PROJ_CHARS.has(t));
+  const cityStateZip = v('f-appcity') + ', ' + v('f-appstate') + ' ' + v('f-appzip');
+  const data = {
+    date: formatDate(v('f-date')),
+    dateSubmitted: formatDate(v('f-subdate')),
+    applicantName: v('f-appname'),
+    applicantCompany: v('f-appcompany'),
+    applicantAddress: v('f-appaddr'),
+    applicantCityStateZip: cityStateZip.trim(),
+    applicantEmail: v('f-appemail'),
+    appNumber: v('f-appnum'),
+    projectName: v('f-projname'),
+    projectAddress: v('f-projaddr'),
+    apn: v('f-apn'),
+    appType: appTypes.map(t => APP_TYPE_LABELS[t]).join(' / ') || 'Not specified',
+    projChar: chars.map(c => CHAR_LABELS[c]).join(' | ') || '',
+    appealDays: v('f-appealdays'),
+    plannerName: v('f-planner'),
+    plannerTitle: v('f-title'),
+    plannerEmail: v('f-email'),
+    cc: v('f-cc') || v('f-cc2'),
+    deficiencies: checked,
+    comments: comments,
+    sfrScoring: collectSFRScores()
+  };
+  if (typeof sendPrompt === 'function') {
+    sendPrompt('GENERATE_COMPLETENESS_LETTER\n' + JSON.stringify(data));
+  } else {
+    alert('This tool must be run inside Claude.ai. Please open it in a Claude Project conversation.');
+  }
+}
+
+
+// ── SFR DESIGN SCORING RUBRIC DATA ──────────────────────────────────────────
+const SFR_SECTIONS = {
+  a: {
+    label: 'Setbacks & Fronts of Houses',
+    maxPts: 25,
+    type: 'points',
+    items: [
+      { id:'sfr-a1', label:'One in three adjacent houses has a varied front setback of at least 5 feet', max:3 },
+      { id:'sfr-a2', label:'Front entries that face the street', max:5 },
+      { id:'sfr-a3', label:'Active use windows (living room, kitchen) facing street', max:4 },
+      { id:'sfr-a4', label:'Main entry feature that is not a garage door', max:5 },
+      { id:'sfr-a5', label:'Covered front porch(es) at least 5 feet deep', max:5 },
+      { id:'sfr-a6', label:'Varied side setbacks', max:3 }
+    ]
+  },
+  b: {
+    label: 'Garages & Driveways',
+    maxPts: 10,
+    type: 'points',
+    items: [
+      { id:'sfr-b7',  label:'Separate pedestrian access to front door from driveway', max:3 },
+      { id:'sfr-b8',  label:'Single/reduced width driveways where possible', max:3 },
+      { id:'sfr-b9',  label:'Driveway paving of salt finish, bomanite, stamped or colored concrete, paver stones', max:4 }
+    ]
+  },
+  c: {
+    label: 'Architecture',
+    maxPts: 42,
+    type: 'points',
+    items: [
+      { id:'sfr-c10', label:'Avoidance of long uninterrupted exterior walls', max:3 },
+      { id:'sfr-c11', label:'Varied texture, relief, design accents on walls', max:3 },
+      { id:'sfr-c12', label:'Recess windows and/or accent trim, fenestration and/or multi-paned glass', max:4 },
+      { id:'sfr-c13', label:'2nd story setbacks on all street side facades of not less than 5 feet', max:4 },
+      { id:'sfr-c14', label:'Roof articulation with changes in plane, use of gables, hips, dormers', max:4 },
+      { id:'sfr-c15', label:'Privacy protection by juxtaposition of 2-story & 1-story houses and upper floor window placement', max:3 },
+      { id:'sfr-c16', label:'Variation of houses to create variety & interest', max:4 },
+      { id:'sfr-c17', label:'Use of porches', max:4 },
+      { id:'sfr-c18', label:'Covered entrances', max:4 },
+      { id:'sfr-c19', label:'Single-story and/or low-mass houses on corners', max:3 },
+      { id:'sfr-c20', label:'Form & scale, with houses in proportion to area of lot', max:3 },
+      { id:'sfr-c21', label:'Common mailbox architectural treatment', max:3 }
+    ]
+  },
+  d: {
+    label: 'Garage & Architectural Features',
+    type: 'yn',
+    requirement: 'At least 3 of 5 items must receive a Yes determination',
+    items: [
+      { id:'sfr-d22', label:'Two out of three homes with recessed, side entry, or detached garages at side or rear' },
+      { id:'sfr-d23', label:'Garages that do not dominate street scene' },
+      { id:'sfr-d24', label:'Garage doors recessed from adjacent walls, with windows' },
+      { id:'sfr-d25', label:'Rear facades adjacent to streets with balconies, verandas, patio covers, window boxes or similar features' },
+      { id:'sfr-d26', label:'Roofing materials of tile, slate or metal' }
+    ]
+  },
+  e: {
+    label: 'Walls & Fences',
+    type: 'yn',
+    requirement: 'All items must receive a Yes determination',
+    items: [
+      { id:'sfr-e27', label:'Corner lots with decorative walls including return to house' },
+      { id:'sfr-e28', label:'Walls with continuous planes greater than 50\' with 2\' change in plane for at least 10 feet or the use of pilasters at 50-foot intervals' },
+      { id:'sfr-e29', label:'Pilasters at property corners or at changes in wall planes' },
+      { id:'sfr-e30', label:'Decorative caps on all walls' },
+      { id:'sfr-e31', label:'Walls placed at top of slopes' },
+      { id:'sfr-e32', label:'Side yard wall returns facing street of decorative block, wrought iron with mesh privacy screen, or woodcrete (no wood allowed)' }
+    ]
+  },
+  f: {
+    label: 'Landscaping',
+    type: 'yn',
+    requirement: 'Landscape Planting Plan must receive a Yes determination per § 17.800.130',
+    items: [
+      { id:'sfr-f33', label:'Front yard landscaping, parkway and entry monumentation landscape treatments to meet the Landscape Design Guidelines, as defined in § 17.800.130' }
+    ]
+  }
+};
+
+function buildSFRRubric() {
+  Object.entries(SFR_SECTIONS).forEach(([secKey, sec]) => {
+    const container = document.getElementById('sfr-section-' + secKey + '-items');
+    if (!container) return;
+    if (sec.type === 'points') {
+      container.innerHTML = sec.items.map(item => `
+        <div class="check-item" style="display:grid;grid-template-columns:1fr 80px 80px;gap:6px;align-items:center;padding:7px 0;">
+          <label style="font-size:13px;color:#1a1a1a;line-height:1.4;">${item.label}</label>
+          <div style="text-align:center;font-size:13px;color:#666;">${item.max}</div>
+          <div style="text-align:center;">
+            <input type="number" id="${item.id}" min="0" max="${item.max}" value=""
+              placeholder="—"
+              style="width:56px;padding:5px 6px;border:1px solid #ccc;border-radius:6px;font-size:13px;text-align:center;font-family:Arial,sans-serif;"
+              oninput="updateSFRScore()" onchange="scheduleAutoSave()">
+          </div>
+        </div>`).join('');
+    } else {
+      container.innerHTML = sec.items.map(item => `
+        <div class="check-item" style="display:grid;grid-template-columns:1fr 60px;gap:6px;align-items:center;padding:7px 0;">
+          <label style="font-size:13px;color:#1a1a1a;line-height:1.4;">${item.label}</label>
+          <div style="text-align:center;">
+            <select id="${item.id}" style="width:56px;padding:5px 4px;border:1px solid #ccc;border-radius:6px;font-size:12px;font-family:Arial,sans-serif;" onchange="updateSFRScore();scheduleAutoSave()">
+              <option value="">—</option>
+              <option value="Y">Y</option>
+              <option value="N">N</option>
+            </select>
+          </div>
+        </div>`).join('');
+    }
+  });
+  updateSFRScore();
+}
+
+function updateSFRScore() {
+  let totalPts = 0;
+  let sectionResults = {};
+
+  Object.entries(SFR_SECTIONS).forEach(([secKey, sec]) => {
+    if (sec.type === 'points') {
+      let secPts = 0;
+      sec.items.forEach(item => {
+        const el = document.getElementById(item.id);
+        if (el) {
+          const val = parseInt(el.value);
+          if (!isNaN(val)) secPts += Math.min(val, item.max);
+        }
+      });
+      totalPts += secPts;
+      const badge = document.getElementById('sfr-score-' + secKey);
+      if (badge) {
+        badge.textContent = secPts + ' / ' + sec.maxPts + ' pts';
+        badge.style.background = secPts >= sec.maxPts * 0.8 ? '#E1F5EE' : secPts > 0 ? '#E6F1FB' : '#eee';
+        badge.style.color = secPts >= sec.maxPts * 0.8 ? '#0F6E56' : secPts > 0 ? '#185FA5' : '#555';
+      }
+      sectionResults[secKey] = { pts: secPts, max: sec.maxPts };
+    } else {
+      let yesCount = 0, noCount = 0, totalAnswered = 0;
+      sec.items.forEach(item => {
+        const el = document.getElementById(item.id);
+        if (el && el.value) {
+          totalAnswered++;
+          if (el.value === 'Y') yesCount++;
+          else noCount++;
+        }
+      });
+      const badge = document.getElementById('sfr-score-' + secKey);
+      let pass = false;
+      if (secKey === 'd') pass = yesCount >= 3;
+      else pass = noCount === 0 && totalAnswered === sec.items.length;
+      if (badge && totalAnswered > 0) {
+        badge.textContent = yesCount + 'Y / ' + noCount + 'N';
+        badge.style.background = pass ? '#E1F5EE' : '#FCEBEB';
+        badge.style.color = pass ? '#0F6E56' : '#A32D2D';
+      } else if (badge) {
+        badge.textContent = '—';
+        badge.style.background = '#eee';
+        badge.style.color = '#555';
+      }
+      sectionResults[secKey] = { yesCount, noCount, pass, totalAnswered };
+    }
+  });
+
+  const pct = Math.round((totalPts / 77) * 100);
+  const fill = document.getElementById('sfr-score-fill');
+  const disp = document.getElementById('sfr-score-display');
+  const pf   = document.getElementById('sfr-pass-fail');
+  if (fill) fill.style.width = Math.min(pct, 100) + '%';
+  if (disp) {
+    disp.textContent = totalPts + ' / 77';
+    disp.style.color = totalPts >= 62 ? '#0F6E56' : totalPts > 0 ? '#BA7517' : '#185FA5';
+  }
+  if (pf) {
+    if (totalPts === 0) {
+      pf.textContent = 'Enter scores below to calculate';
+      pf.style.color = '#888';
+    } else if (totalPts >= 62) {
+      pf.innerHTML = '✓ Passes point threshold (' + totalPts + '/77, ' + pct + '%) — minimum 62 required';
+      pf.style.color = '#0F6E56';
+    } else {
+      pf.innerHTML = '✗ Below minimum threshold (' + totalPts + '/77, ' + pct + '%) — needs ' + (62 - totalPts) + ' more points';
+      pf.style.color = '#A32D2D';
+    }
+  }
+  if (fill) fill.style.background = totalPts >= 62 ? '#1D9E75' : totalPts > 0 ? '#BA7517' : '#185FA5';
+}
+
+function collectSFRScores() {
+  if (!selectedTypes.has('SFR')) return null;
+  const result = { sections: {} };
+  let totalPts = 0;
+  Object.entries(SFR_SECTIONS).forEach(([secKey, sec]) => {
+    const sectionData = { label: sec.label, type: sec.type, items: [] };
+    if (sec.type === 'points') {
+      let secPts = 0;
+      sec.items.forEach(item => {
+        const el = document.getElementById(item.id);
+        const val = el ? parseInt(el.value) : NaN;
+        const scored = !isNaN(val) ? Math.min(val, item.max) : 0;
+        secPts += scored;
+        sectionData.items.push({ label: item.label, max: item.max, score: isNaN(val) ? null : scored });
+      });
+      sectionData.sectionTotal = secPts;
+      sectionData.sectionMax = sec.maxPts;
+      totalPts += secPts;
+    } else {
+      sec.items.forEach(item => {
+        const el = document.getElementById(item.id);
+        sectionData.items.push({ label: item.label, value: el ? el.value : '' });
+      });
+      sectionData.requirement = sec.requirement;
+    }
+    const commentEl = document.getElementById('sfr-comment-' + secKey);
+    sectionData.staffComment = commentEl ? commentEl.value.trim() : '';
+    result.sections[secKey] = sectionData;
+  });
+  result.totalPoints = totalPts;
+  result.maxPoints = 77;
+  result.passingScore = 62;
+  result.passes = totalPts >= 62;
+  const overallEl = document.getElementById('sfr-comment-overall');
+  result.overallComment = overallEl ? overallEl.value.trim() : '';
+  return result;
+}
+
+function collectSFRFormState() {
+  const state = {};
+  Object.entries(SFR_SECTIONS).forEach(([secKey, sec]) => {
+    sec.items.forEach(item => {
+      const el = document.getElementById(item.id);
+      if (el) state[item.id] = el.value;
+    });
+    const commentEl = document.getElementById('sfr-comment-' + secKey);
+    if (commentEl) state['sfr-comment-' + secKey] = commentEl.value;
+  });
+  const overallEl = document.getElementById('sfr-comment-overall');
+  if (overallEl) state['sfr-comment-overall'] = overallEl.value;
+  return state;
+}
+
+function restoreSFRFormState(sfrState) {
+  if (!sfrState) return;
+  buildSFRRubric();
+  Object.entries(sfrState).forEach(([id, val]) => {
+    const el = document.getElementById(id);
+    if (el) el.value = val;
+  });
+  updateSFRScore();
+}
+
+// Build rubric on load
+// buildSFRRubric called in consolidated load handler below
+
+// ── AUTO-SAVE ─────────────────────────────────────────────────
+const STORAGE_KEY = 'sj_completeness_draft';
+let autoSaveTimer = null;
+
+function collectFormState() {
+  // Collect all field values
+  const fields = ['f-date','f-subdate','f-appname','f-appcompany','f-appaddr',
+    'f-appcity','f-appstate','f-appzip','f-appemail','f-appnum','f-apn',
+    'f-projname','f-projaddr','f-planner','f-title','f-email','f-appealdays','f-cc'];
+  const fieldData = {};
+  fields.forEach(function(id) {
+    const el = document.getElementById(id);
+    if (el) fieldData[id] = el.value;
+  });
+
+  // Collect selected types
+  const types = [...selectedTypes];
+
+  // Collect checked deficiencies + detail notes
+  const checkedItems = [];
+  document.querySelectorAll('input[type=checkbox]').forEach(function(chk) {
+    if (chk.checked) {
+      const det = document.getElementById('det-' + chk.id.replace('chk-',''));
+      checkedItems.push({ id: chk.id, note: det ? det.value : '' });
+    }
+  });
+
+  // Collect project-specific comments
+  const comments = [];
+  document.querySelectorAll('.dev-entry').forEach(function(row) {
+    const cat = row.querySelector('select').value;
+    const txt = row.querySelector('input[type=text]').value;
+    comments.push({ category: cat, text: txt });
+  });
+
+  return {
+    version: 1,
+    savedAt: new Date().toISOString(),
+    currentStep: currentStep,
+    fields: fieldData,
+    selectedTypes: types,
+    checkedItems: checkedItems,
+    comments: comments,
+    sfrState: collectSFRFormState()
+  };
+}
+
+function restoreFormState(state) {
+  if (!state || state.version !== 1) return;
+
+  // Restore fields
+  Object.keys(state.fields).forEach(function(id) {
+    const el = document.getElementById(id);
+    if (el) el.value = state.fields[id];
+  });
+
+  // Restore selected types
+  selectedTypes = new Set(state.selectedTypes || []);
+  document.querySelectorAll('.selector-card').forEach(function(card) {
+    if (selectedTypes.has(card.dataset.type)) {
+      card.classList.add('selected');
+    }
+  });
+
+  // Always rebuild checklist so checkboxes exist in DOM
+  buildChecklist();
+
+  // Restore checked items — checkbox must exist in DOM after buildChecklist()
+  var sectionsToOpen = new Set();
+  (state.checkedItems || []).forEach(function(item) {
+    var chk = document.getElementById(item.id);
+    if (chk) {
+      chk.checked = true;
+      // Find the parent section body and record it to open
+      var body = chk.closest('.section-body');
+      if (body) {
+        sectionsToOpen.add(body.id);
+        updateCount(body.id.replace('body-',''));
+      }
+      // Restore detail note if present
+      var det = document.getElementById('det-' + item.id.replace('chk-',''));
+      if (det && item.note) {
+        det.value = item.note;
+        det.style.display = 'block';
+      }
+    }
+  });
+
+  // Open any section that has checked items so staff can see them
+  sectionsToOpen.forEach(function(bodyId) {
+    var body = document.getElementById(bodyId);
+    if (body) {
+      body.classList.add('open');
+      var hdr = body.previousElementSibling;
+      if (hdr) {
+        var chevron = hdr.querySelector('.chevron');
+        if (chevron) chevron.classList.add('open');
+      }
+    }
+  });
+
+  // Restore project-specific comments
+  (state.comments || []).forEach(function(c) {
+    if (!c.category && !c.text) return;
+    addDevEntry();
+    var rows = document.querySelectorAll('.dev-entry');
+    var row = rows[rows.length - 1];
+    if (c.category) row.querySelector('select').value = c.category;
+    if (c.text) row.querySelector('input[type=text]').value = c.text;
+  });
+
+  // Restore SFR rubric state
+  if (state.sfrState) restoreSFRFormState(state.sfrState);
+
+  // Navigate to the step they were on
+  if (state.currentStep && state.currentStep > 1) {
+    setStep(state.currentStep);
+  }
+
+  refreshSummary();
+  updateSaveStatus('ok', 'Draft restored from ' + new Date(state.savedAt).toLocaleString());
+}
+
+function autoSave() {
+  try {
+    const state = collectFormState();
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    updateSaveStatus('ok', 'Auto-saved at ' + new Date().toLocaleTimeString());
+  } catch(e) {
+    // localStorage may not be available in all contexts
+  }
+}
+
+function scheduleAutoSave() {
+  clearTimeout(autoSaveTimer);
+  autoSaveTimer = setTimeout(autoSave, 1500);
+}
+
+function updateSaveStatus(type, msg) {
+  const el = document.getElementById('save-status');
+  if (!el) return;
+  el.textContent = msg;
+  el.className = 'save-status ' + (type || '');
+}
+
+function exportDraft() {
+  const state = collectFormState();
+  const projNum = (document.getElementById('f-appnum') || {}).value || 'draft';
+  const filename = 'Completeness_Draft_' + projNum.replace(/[^a-zA-Z0-9-]/g,'_') + '.json';
+  const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  updateSaveStatus('ok', 'Draft saved as ' + filename);
+}
+
+function importDraft(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const state = JSON.parse(e.target.result);
+      // Clear current state first
+      hardClearForm();
+      restoreFormState(state);
+      updateSaveStatus('ok', 'Draft loaded: ' + file.name);
+    } catch(err) {
+      alert('Could not read draft file. Make sure it is a valid .json draft.');
+    }
+  };
+  reader.readAsText(file);
+  event.target.value = '';
+}
+
+function clearDraft() {
+  if (!confirm('Clear all form data and start fresh?')) return;
+  hardClearForm();
+  try { localStorage.removeItem(STORAGE_KEY); } catch(e) {}
+  updateSaveStatus('', 'Draft cleared');
+}
+
+function hardClearForm() {
+  // Reset fields
+  ['f-date','f-subdate','f-appname','f-appcompany','f-appaddr',
+   'f-appcity','f-appstate','f-appzip','f-appemail','f-appnum','f-apn',
+   'f-projname','f-projaddr','f-planner','f-title','f-email','f-appealdays','f-cc'
+  ].forEach(function(id) {
+    const el = document.getElementById(id);
+    if (el) { el.value = id === 'f-appstate' ? 'CA' : id === 'f-appealdays' ? '10' : ''; }
+  });
+  // Reset types
+  selectedTypes = new Set();
+  document.querySelectorAll('.selector-card').forEach(function(c) { c.classList.remove('selected'); });
+  // Reset checklist
+  document.getElementById('all-deficiencies').innerHTML = '';
+  // Reset comments
+  document.getElementById('dev-entries').innerHTML = '<div class="empty-msg" id="empty-msg">No comments added yet. Click "+ Add comment" to begin.</div>';
+  entryCounter = 0;
+  // Go back to step 1
+  setStep(1);
+  refreshSummary();
+}
+
+// ── WIRE UP AUTO-SAVE TO ALL INPUTS ──────────────────────────
+document.addEventListener('input', scheduleAutoSave);
+document.addEventListener('change', scheduleAutoSave);
+document.addEventListener('click', function(e) {
+  if (e.target.matches('.selector-card, .selector-card *')) scheduleAutoSave();
+  if (e.target.matches('input[type=checkbox]')) scheduleAutoSave();
+});
+
+// ── LOAD FROM LOCALSTORAGE ON PAGE OPEN ──────────────────────
+window.addEventListener('load', function() {
+  // Build SFR rubric inputs
+  buildSFRRubric();
+  // Restore draft if available
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      const state = JSON.parse(saved);
+      const savedAt = new Date(state.savedAt);
+      const mins = Math.round((Date.now() - savedAt) / 60000);
+      const timeAgo = mins < 1 ? 'just now' : mins < 60 ? mins + ' min ago' : Math.round(mins/60) + ' hr ago';
+      if (confirm('A draft was auto-saved ' + timeAgo + '. Would you like to restore it?')) {
+        restoreFormState(state);
+        return;
+      } else {
+        updateSaveStatus('warn', 'Draft available — click "Load draft" to restore');
+      }
+    }
+  } catch(e) {
+    // ignore
+  }
+  // No draft restored — sync button state
+  syncNavButtons();
+});
+
+// Call setupPWA after DOM is ready
+document.addEventListener('DOMContentLoaded', setupPWA);
+</script>
+
+<script>
+// ── PWA SETUP (inline — no external files needed) ────────────────────────────
+
+// 1. Generate the app icon as a canvas-drawn PNG (document + checkmark, #185FA5)
+function generateIconDataURL(size) {
+  const canvas = document.createElement('canvas');
+  canvas.width = size;
+  canvas.height = size;
+  const ctx = canvas.getContext('2d');
+  const s = size / 192; // scale factor relative to 192px base
+
+  // Background rounded rect
+  const r = 36 * s;
+  ctx.fillStyle = '#185FA5';
+  ctx.beginPath();
+  ctx.moveTo(r, 0);
+  ctx.lineTo(size - r, 0);
+  ctx.quadraticCurveTo(size, 0, size, r);
+  ctx.lineTo(size, size - r);
+  ctx.quadraticCurveTo(size, size, size - r, size);
+  ctx.lineTo(r, size);
+  ctx.quadraticCurveTo(0, size, 0, size - r);
+  ctx.lineTo(0, r);
+  ctx.quadraticCurveTo(0, 0, r, 0);
+  ctx.closePath();
+  ctx.fill();
+
+  // Document body (white rectangle)
+  const docX = 44 * s, docY = 28 * s;
+  const docW = 104 * s, docH = 130 * s;
+  const docR = 8 * s;
+  ctx.fillStyle = '#ffffff';
+  ctx.beginPath();
+  ctx.moveTo(docX + docR, docY);
+  ctx.lineTo(docX + docW - 24 * s, docY); // folded corner
+  ctx.lineTo(docX + docW, docY + 24 * s);
+  ctx.lineTo(docX + docW, docY + docH);
+  ctx.quadraticCurveTo(docX + docW, docY + docH + docR, docX + docW - docR, docY + docH + docR);
+  ctx.lineTo(docX + docR, docY + docH + docR);
+  ctx.quadraticCurveTo(docX, docY + docH + docR, docX, docY + docH);
+  ctx.lineTo(docX, docY + docR);
+  ctx.quadraticCurveTo(docX, docY, docX + docR, docY);
+  ctx.closePath();
+  ctx.fill();
+
+  // Folded corner detail
+  ctx.fillStyle = '#B8D4F0';
+  ctx.beginPath();
+  ctx.moveTo(docX + docW - 24 * s, docY);
+  ctx.lineTo(docX + docW - 24 * s, docY + 24 * s);
+  ctx.lineTo(docX + docW, docY + 24 * s);
+  ctx.closePath();
+  ctx.fill();
+
+  // Document lines (text lines representation)
+  ctx.fillStyle = '#B8D4F0';
+  const lineX = docX + 12 * s;
+  const lineW = docW - 24 * s;
+  [60, 76, 92, 108].forEach(function(ly) {
+    ctx.fillRect(lineX, ly * s, lineW, 5 * s);
+  });
+  // shorter last line
+  ctx.fillRect(lineX, 124 * s, lineW * 0.6, 5 * s);
+
+  // Checkmark circle (green badge, bottom-right)
+  const cx = 138 * s, cy = 138 * s, cr = 30 * s;
+  ctx.fillStyle = '#1D9E75';
+  ctx.beginPath();
+  ctx.arc(cx, cy, cr, 0, Math.PI * 2);
+  ctx.fill();
+
+  // White checkmark
+  ctx.strokeStyle = '#ffffff';
+  ctx.lineWidth = 6 * s;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+  ctx.beginPath();
+  ctx.moveTo(cx - 13 * s, cy);
+  ctx.lineTo(cx - 3 * s, cy + 11 * s);
+  ctx.lineTo(cx + 14 * s, cy - 10 * s);
+  ctx.stroke();
+
+  return canvas.toDataURL('image/png');
+}
+
+// 2. Build inline manifest blob and inject into <link rel="manifest">
+function setupPWA() {
+  const icon192 = generateIconDataURL(192);
+  const icon512 = generateIconDataURL(512);
+
+  // Apple touch icon (180px)
+  const icon180 = generateIconDataURL(180);
+  const appleLink = document.getElementById('pwa-icon-link');
+  if (appleLink) appleLink.href = icon180;
+
+  const manifest = {
+    name: 'Completeness Letter Generator',
+    short_name: 'Completeness',
+    description: 'City of San Jacinto Planning Division — Completeness Letter Generator',
+    start_url: './',
+    display: 'standalone',
+    background_color: '#f5f5f3',
+    theme_color: '#185FA5',
+    icons: [
+      { src: icon192, sizes: '192x192', type: 'image/png', purpose: 'any maskable' },
+      { src: icon512, sizes: '512x512', type: 'image/png', purpose: 'any maskable' }
+    ]
+  };
+
+  const blob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
+  const manifestURL = URL.createObjectURL(blob);
+  const manifestLink = document.getElementById('pwa-manifest');
+  if (manifestLink) manifestLink.href = manifestURL;
+
+  // 3. Register inline service worker for offline support
+  if ('serviceWorker' in navigator) {
+    const swCode = `
+const CACHE = 'completeness-letter-v1';
+self.addEventListener('install', function(e) {
+  e.waitUntil(
+    caches.open(CACHE).then(function(cache) {
+      return cache.addAll([self.location.origin + self.location.pathname]);
+    })
+  );
+  self.skipWaiting();
+});
+self.addEventListener('activate', function(e) {
+  e.waitUntil(
+    caches.keys().then(function(keys) {
+      return Promise.all(keys.filter(function(k) { return k !== CACHE; }).map(function(k) { return caches.delete(k); }));
+    })
+  );
+  self.clients.claim();
+});
+self.addEventListener('fetch', function(e) {
+  e.respondWith(
+    caches.match(e.request).then(function(r) { return r || fetch(e.request); })
+  );
+});
+    `;
+    const swBlob = new Blob([swCode], { type: 'application/javascript' });
+    const swURL = URL.createObjectURL(swBlob);
+    navigator.serviceWorker.register(swURL, { scope: './' }).catch(function() {
+      // SW registration is best-effort; fail silently
+    });
+  }
+
+  // 4. Show install prompt if browser fires beforeinstallprompt
+  let deferredPrompt = null;
+  window.addEventListener('beforeinstallprompt', function(e) {
+    e.preventDefault();
+    deferredPrompt = e;
+    showInstallBanner();
+  });
+
+  function showInstallBanner() {
+    if (document.getElementById('install-banner')) return;
+    const banner = document.createElement('div');
+    banner.id = 'install-banner';
+    banner.style.cssText = 'position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:#185FA5;color:#fff;padding:10px 18px;border-radius:10px;font-size:13px;font-family:Arial,sans-serif;display:flex;align-items:center;gap:12px;box-shadow:0 4px 16px rgba(0,0,0,0.18);z-index:9999;white-space:nowrap;';
+    banner.innerHTML = '<span>Add to desktop for quick access</span><button id="install-btn" style="background:#fff;color:#185FA5;border:none;border-radius:6px;padding:5px 12px;font-size:12px;font-weight:600;cursor:pointer;font-family:Arial,sans-serif;">Install</button><button id="install-dismiss" style="background:transparent;color:rgba(255,255,255,0.7);border:none;font-size:18px;cursor:pointer;padding:0 2px;line-height:1;">&times;</button>';
+    document.body.appendChild(banner);
+
+    document.getElementById('install-btn').addEventListener('click', function() {
+      banner.remove();
+      if (deferredPrompt) { deferredPrompt.prompt(); deferredPrompt = null; }
+    });
+    document.getElementById('install-dismiss').addEventListener('click', function() {
+      banner.remove();
+    });
+  }
+}
+
+// setupPWA called in consolidated load handler above
+</script>
+</body>
+</html>
